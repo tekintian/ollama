@@ -14,9 +14,9 @@
 VOL_NAME=${VOL_NAME:-"Ollama"}
 export VERSION=${VERSION:-$(git describe --tags --first-parent --abbrev=7 --long --dirty --always | sed -e "s/^v//g")}
 export GOFLAGS="'-ldflags=-w -s \"-X=github.com/ollama/ollama/version.Version=${VERSION#v}\" \"-X=github.com/ollama/ollama/server.mode=release\"'"
-export CGO_CFLAGS="-O3 -mmacosx-version-min=14.0"
-export CGO_CXXFLAGS="-O3 -mmacosx-version-min=14.0"
-export CGO_LDFLAGS="-mmacosx-version-min=14.0"
+export CGO_CFLAGS="-O3 -mmacosx-version-min=11.0"
+export CGO_CXXFLAGS="-O3 -mmacosx-version-min=11.0"
+export CGO_LDFLAGS="-mmacosx-version-min=11.0"
 
 set -e
 
@@ -49,7 +49,7 @@ _build_darwin() {
             BUILD_DIR=build/darwin-$ARCH
             cmake -B $BUILD_DIR \
                 -DCMAKE_OSX_ARCHITECTURES=x86_64 \
-                -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
                 -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX \
                 -DMLX_ENGINE=ON \
                 -DMLX_ENABLE_X64_MAC=ON \
@@ -59,19 +59,19 @@ _build_darwin() {
             cmake --install $BUILD_DIR --component CPU
             cmake --install $BUILD_DIR --component MLX
             # Override CGO flags to point to the amd64 build directory
-            MLX_CGO_CFLAGS="-O3 -I$(pwd)/$BUILD_DIR/_deps/mlx-c-src -mmacosx-version-min=14.0"
-            MLX_CGO_LDFLAGS="-ldl -lc++ -framework Accelerate -mmacosx-version-min=14.0"
+            MLX_CGO_CFLAGS="-O3 -I$(pwd)/$BUILD_DIR/_deps/mlx-c-src -mmacosx-version-min=11.0"
+            MLX_CGO_LDFLAGS="-ldl -lc++ -framework Accelerate -mmacosx-version-min=11.0"
         else
             BUILD_DIR=build
             cmake --preset MLX \
                 -DOLLAMA_RUNNER_DIR=./ \
-                -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
                 -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX
             cmake --build --preset MLX --parallel
             cmake --install $BUILD_DIR --component MLX
             # Use default CGO flags from mlx.go for arm64
-            MLX_CGO_CFLAGS="-O3 -I$(pwd)/$BUILD_DIR/_deps/mlx-c-src -mmacosx-version-min=14.0"
-            MLX_CGO_LDFLAGS="-lc++ -framework Metal -framework Foundation -framework Accelerate -mmacosx-version-min=14.0"
+            MLX_CGO_CFLAGS="-O3 -I$(pwd)/$BUILD_DIR/_deps/mlx-c-src -mmacosx-version-min=11.0"
+            MLX_CGO_LDFLAGS="-lc++ -framework Metal -framework Foundation -framework Accelerate -mmacosx-version-min=11.0"
         fi
         GOOS=darwin GOARCH=$ARCH CGO_ENABLED=1 CGO_CFLAGS="$MLX_CGO_CFLAGS" CGO_LDFLAGS="$MLX_CGO_LDFLAGS" go build -tags mlx -o $INSTALL_PREFIX .
         # Copy MLX libraries to same directory as executable for dlopen

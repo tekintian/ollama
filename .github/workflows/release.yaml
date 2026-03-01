@@ -39,9 +39,9 @@ jobs:
       APPLE_ID: ${{ vars.APPLE_ID }}
       MACOS_SIGNING_KEY: ${{ secrets.MACOS_SIGNING_KEY }}
       MACOS_SIGNING_KEY_PASSWORD: ${{ secrets.MACOS_SIGNING_KEY_PASSWORD }}
-      CGO_CFLAGS: '-mmacosx-version-min=14.0 -O3'
-      CGO_CXXFLAGS: '-mmacosx-version-min=14.0 -O3'
-      CGO_LDFLAGS: '-mmacosx-version-min=14.0 -O3'
+      CGO_CFLAGS: '-mmacosx-version-min=11.0 -O3'
+      CGO_CXXFLAGS: '-mmacosx-version-min=11.0 -O3'
+      CGO_LDFLAGS: '-mmacosx-version-min=11.0 -O3'
     steps:
       - uses: actions/checkout@v4
       - run: |
